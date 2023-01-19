@@ -1,0 +1,39 @@
+// 分组函数 sum max min count avg
+// 也叫多行处理函数 输入多行 输出一行
+// 自动忽略NULL
+select sum(sal) from emp;
+select max(sal) from emp;
+
+// 单行处理函数 输入一行 输出一行
+
+// 计算每个员工年薪
+select ename,(sal+comm)*12 as yearsal from emp; // 所有数据库都规定 只要有NULL参与的运算结果一定是NULL（分组函数自动忽略NULL）
+
+// 空处理函数（属于单行处理函数）
+ifnull(可能为NULL的数据,当作什么处理)
+// 分组函数不可用在where后
+
+// count(*) 和 count(具体的某个字段)
+统计总记录条数和字段无关   统计字段中不为NULL的数据
+
+group by：按照某个字段或某些字段进行分组
+having：是对分组后的数据进行再次过滤
+案例：找出每个工作岗位的最高薪资
+select max(sal) from emp group by job;
+
+注意：分组函数一般都会和group by联合使用，
+并且分组函数都是在group by语句执行后执行。
+
+having是group by的搭档 没有group by having无法使用
+
+distinct关键字 去除重复记录
+
+连接查询：
+  内连接
+    等值连接
+    非等值连接
+    自连接
+  外连接
+    左外连接（左连接）
+    右外连接（右连接）
+  全连接（用的少）
