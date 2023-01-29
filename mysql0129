@@ -1,0 +1,158 @@
+笛卡尔积现象：当两张表进行连接查询的时候，没有任何条件进行限制，最终的查询结果条数是两张表记录条数的乘积。
+
+select e.ename,d.dname from emp e,dept d;  // e d 是表的别名
+
+内连接之等值连接：最大特点是：条件是等量关系。
+    select
+    		e.ename,d.dname
+    	from
+    		emp e
+    	join
+    		dept d
+    	on
+    		e.deptno = d.deptno;
+上述sql语句是查询每个员工的部门名称
+
+内连接之非等值连接：最大的特点是：连接条件中的关系是非等量关系。
+    select
+    	e.ename,e.sal,s.grade
+    from
+    	emp e
+    inner join
+    	salgrade s
+    on
+    	e.sal between s.losal and s.hisal;
+上述sql语句是找出每个员工的工资等级
+
+自连接：最大的特点是：一张表看做两张表。自己连接自己。
+
+外连接：有一张表作为主表，分为右外连接和左外连接，取决于哪张表是主表，主表的数据都要显示，没有对应的数据则用null表示
+    select
+    	a.ename '员工', b.ename '领导'
+    from
+    	emp a
+    left outer join // outer可以省略
+    	emp b
+    on
+    	a.mgr = b.empno;
+上述sql语句为左外连接 则左表是主表
+
+三张表连接查询
+
+....
+		A
+	join
+		B
+	join
+		C
+	on
+		...
+A表先和B表连接，再A表和C表连接
+
+    select
+    		e.ename,d.dname,s.grade
+    	from
+    		emp e
+    	join
+    		dept d
+    	on
+    		e.deptno = d.deptno
+    	join
+    		salgrade s
+    	on
+    		e.sal between s.losal and s.hisal;
+上述sql语句表示找出每一个员工的部门名称以及工资等级。
+
+子查询
+
+select语句当中嵌套select语句，被嵌套的select语句是子查询。
+
+子查询出现在：select
+          			..(select).
+          		from
+          			..(select).
+          		where
+          			..(select).
+
+where中使用子查询
+
+select * from emp where sal > (select avg(sal) from emp);
+上述为找出高于平均薪资的员工信息
+
+from后嵌套子查询
+
+找出每个部门平均薪水的等级。
+第一步：找出每个部门平均薪水（按照部门编号分组，求sal的平均值）
+select deptno,avg(sal) as avgsal from emp group by deptno;
+
+第二步：将以上的查询结果当做临时表t，让t表和salgrade s表连接
+    select
+    	t.*,s.grade
+    from
+    	(select deptno,avg(sal) as avgsal from emp group by deptno) t
+    join
+    	salgrade s
+    on
+    	t.avgsal between s.losal and s.hisal;
+
+select后面嵌套子查询
+    select
+    	e.ename,d.dname
+    from
+    	emp e
+    join
+    	dept d
+    on
+    	e.deptno = d.deptno;
+
+    select
+    	e.ename,(select d.dname from dept d where e.deptno = d.deptno) as dname
+    from
+    	emp e;
+上述sql语句为找出每个员工所在的部门名称
+
+union （可以将查询结果集相加）
+select ename,job from emp where job = 'MANAGER' or job = 'SALESMAN';//找出岗位是SALESMAN和MANAGER的
+select ename,job from emp where job in('MANAGER','SALESMAN');//第二种方法
+
+使用union：
+select ename,job from emp where job = 'MANAGER'
+union
+select ename,job from emp where job = 'SALESMAN';
+
+limit（mysql特有）
+limit取结果集中的部分数据
+语法：
+    limit startIndex, length
+  		startIndex表示起始位置，从0开始，0表示第一条数据。
+  		length表示取几个
+
+取出工资前5名的员工
+select ename,sal from emp order by sal desc limit 0, 5;
+
+limit执行顺序在最后
+
+创建表：
+  建表语句的语法格式：
+    create table 表名(
+      字段名1 数据类型,
+      字段名2 数据类型,
+      ...
+    );
+        int		  整数型(java中的int)
+    		bigint	长整型(java中的long)
+    		float		浮点型(java中的float double)
+    		char		定长字符串(String)
+    		varchar	可变长字符串(StringBuffer/StringBuilder)
+    		date		日期类型 （对应Java中的java.sql.Date类型）
+    		BLOB		二进制大对象（存储图片、视频等流媒体信息） Binary Large OBject （对应java中的Object）
+    		CLOB		字符大对象（存储较大文本，比如，可以存储4G的字符串。） Character Large OBject（对应java中的Object）
+
+insert语句插入数据
+  语法：insert into 表名(字段名1,字段名2,...) values(值1,值2,...)
+		    要求：字段的数量和值的数量相同，并且数据类型要对应相同。
+
+表的复制
+  语法：
+    create table 表名 as select语句;
+    将查询结果当做表创建出来。
