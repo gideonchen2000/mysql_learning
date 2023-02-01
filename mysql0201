@@ -1,0 +1,48 @@
+46，修改表中的数据：update
+  语法格式：update 表名 set 字段名1=值1，字段名2=值2... where 条件；
+  ////注意：没有条件整张表数据全部更新。
+
+	update dept1 set loc = 'SHANGHAI', dname = 'RENSHIBU' where deptno = 10;
+	上述sql语句为：将部门10的LOC修改为SHANGHAI，将部门名称修改为RENSHIBU
+
+  update dept1 set loc = 'x', dname = 'y';
+  上述sql语句为：更新所有记录
+
+47，删除表中数据
+ 语法：delete from 表名 where 条件；
+ ////注意：没有条件全部删除。
+
+ delete from dept1 where deptno = 10;
+ 上述SQL语句为删除部门10的数据；
+
+ 删除所有记录：delete from dept1；
+
+ ****怎么删除大表中的数据？
+		truncate table 表名; // 表被截断，不可回滚 永久丢失。
+
+ 删除表
+  drop table 表名; // 这个通用
+  drop table if exists 表名; // oracle不支持
+
+48，表结构的修改：使用工具
+
+49，约束作用已及常见约束（Constraint）
+ 在创建表的时候，可以给表的字段添加相应的约束，添加约束的目的是为了保证表中数据的合法性、有效性、完整性。
+ 常见的约束有哪些
+		非空约束(not null)：约束的字段不能为NULL
+		唯一约束(unique)：约束的字段不能重复
+		主键约束(primary key)：约束的字段既不能为NULL，也不能重复（简称PK）
+		外键约束(foreign key)：...（简称FK）
+		/// 检查约束(check)：注意Oracle数据库有check约束，但是mysql没有，目前mysql不支持该约束。
+
+50，非空约束 not null
+
+ create table t_user(
+   id int,
+   username varchar(255) not null,
+   password varchar(255)
+ );
+ insert into t_user(id,password) values(1,'123');
+ ERROR 1364 (HY000): Field 'username' doesn't have a default value
+
+ insert into t_user(id,username,password) values(1,'lisi','123');
